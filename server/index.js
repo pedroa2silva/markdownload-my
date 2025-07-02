@@ -10,6 +10,8 @@ const {
 
 const app = express();
 app.use(express.json({ limit: '10mb' }));
+const PUBLIC_DIR = path.join(__dirname, 'public');
+app.use(express.static(PUBLIC_DIR));
 
 const OUTPUT_DIR = path.join(__dirname, 'output');
 fs.mkdirSync(OUTPUT_DIR, { recursive: true });
