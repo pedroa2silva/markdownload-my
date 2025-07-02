@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>MarkDownload Server Test</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; }
+    #result { white-space: pre-wrap; border: 1px solid #ccc; padding: 1em; margin-top: 1em; }
+  </style>
+</head>
+<body>
+  <h1>MarkDownload Server Test</h1>
+  <input id="url" type="text" placeholder="Enter URL" size="50" />
+  <button id="clip">Clip</button>
+  <pre id="result"></pre>
+  <script>
+    document.getElementById('clip').addEventListener('click', async () => {
+      const url = document.getElementById('url').value;
+      if (!url) return;
+      const res = await fetch('/clip', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+      const data = await res.json();
+      if (data.markdown) {
+        document.getElementById('result').textContent = data.markdown;
+      } else {
+        document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+      }
+    });
+  </script>
+</body>
+</html>
