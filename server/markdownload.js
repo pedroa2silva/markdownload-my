@@ -24,7 +24,7 @@ const defaultOptions = {
   frontmatter: "---\ncreated: {date:YYYY-MM-DDTHH:mm:ss} (UTC {date:Z})\ntags: [{keywords}]\nsource: {baseURI}\nauthor: {byline}\n---\n\n# {pageTitle}\n\n> ## Excerpt\n> {excerpt}\n\n---",
   backmatter: "",
   title: "{pageTitle}",
-  includeTemplate: false,
+  includeTemplate: true,
   saveAs: false,
   downloadImages: false,
   imagePrefix: "{pageTitle}/",
