@@ -5,8 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const fetch = global.fetch;
 const {
   getArticleFromDom,
-  convertArticleToMarkdown,
-  getOptions
+  convertArticleToMarkdown
 } = require('./markdownload');
 
 const app = express();
@@ -16,10 +15,6 @@ app.use(express.static(PUBLIC_DIR));
 
 const OUTPUT_DIR = path.join(__dirname, 'output');
 fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-
-app.get('/options', (req, res) => {
-  res.json(getOptions());
-});
 
 app.post('/clip', async (req, res) => {
   const { url, options = {} } = req.body;
