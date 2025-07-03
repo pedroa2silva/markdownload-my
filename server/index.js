@@ -31,11 +31,22 @@ app.post('/clip', async (req, res) => {
   try {
     let html;
     if (usePuppeteer) {
-      const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-      const page = await browser.newPage();
-      await page.goto(url, { waitUntil: 'networkidle0' });
-      html = await page.content();
-      await browser.close();
+      try {
+        const browser = await puppeteer.launch({
+          args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+        const page = await browser.newPage();
+        await page.goto(url, { waitUntil: 'networkidle0' });
+        html = await page.content();
+        await browser.close();
+      } catch (puppeteerErr) {
+        console.error('Puppeteer failed, falling back to fetch', puppeteerErr);
+        if (/libatk|browser process/i.test(puppeteerErr.message || '')) {
+          console.error('Missing system libraries detected. See README for Puppeteer setup.');
+        }
+        const response = await fetch(url);
+        html = await response.text();
+      }
     } else {
       const response = await fetch(url);
       html = await response.text();
