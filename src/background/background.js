@@ -562,6 +562,9 @@ async function notify(message) {
   else if (message.type == "download") {
     downloadMarkdown(message.markdown, message.title, message.tab.id, message.imageList, message.mdClipsFolder);
   }
+  else if (message.type == "send-url") {
+    sendUrlToServer(message.url);
+  }
 }
 
 browser.commands.onCommand.addListener(function (command) {
@@ -617,6 +620,9 @@ browser.contextMenus.onClicked.addListener(function (info, tab) {
   }
   else if (info.menuItemId.startsWith("copy-tab-as-markdown-link")) {
     copyTabAsMarkdownLink(tab);
+  }
+  else if (info.menuItemId == "send-url-to-server") {
+    sendUrlToServer(tab.url);
   }
   // a settings toggle command
   else if (info.menuItemId.startsWith("toggle-") || info.menuItemId.startsWith("tabtoggle-")) {
@@ -1003,6 +1009,20 @@ async function downloadMarkdownForAllTabs(info) {
   tabs.forEach(tab => {
     downloadMarkdownFromContext(info, tab);
   });
+}
+
+async function sendUrlToServer(url) {
+  const options = await getOptions();
+  if (!options.serverEndpoint) return;
+  try {
+    await fetch(options.serverEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+  } catch (err) {
+    console.error('Failed to send URL to server', err);
+  }
 }
 
 /**

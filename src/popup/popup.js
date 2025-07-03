@@ -24,6 +24,7 @@ cm.on("cursorActivity", (cm) => {
 });
 document.getElementById("download").addEventListener("click", download);
 document.getElementById("downloadSelection").addEventListener("click", downloadSelection);
+document.getElementById("sendUrl").addEventListener("click", sendUrlToServer);
 
 const defaultOptions = {
     includeTemplate: false,
@@ -210,6 +211,15 @@ async function downloadSelection(e) {
     if (cm.somethingSelected()) {
         await sendDownloadMessage(cm.getSelection());
     }
+}
+
+// event handler for send URL button
+async function sendUrlToServer(e) {
+    e.preventDefault();
+    const tabs = await browser.tabs.query({ currentWindow: true, active: true });
+    const url = tabs[0].url;
+    await browser.runtime.sendMessage({ type: "send-url", url });
+    window.close();
 }
 
 //function that handles messages from the injected script into the site

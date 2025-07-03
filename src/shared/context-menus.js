@@ -148,6 +148,14 @@ async function createMenus() {
         contexts: ["all"]
       }, () => { });
     }
+
+    if(options.serverEndpoint){
+      browser.contextMenus.create({
+        id: "send-url-to-server",
+        title: "Send Tab URL to Server",
+        contexts: ["all"]
+      }, () => { });
+    }
     browser.contextMenus.create({
       id: "separator-3",
       type: "separator",
