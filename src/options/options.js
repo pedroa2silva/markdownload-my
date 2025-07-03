@@ -20,6 +20,7 @@ const saveOptions = e => {
         obsidianIntegration: document.querySelector("[name='obsidianIntegration']").checked,
         obsidianVault: document.querySelector("[name='obsidianVault']").value,
         obsidianFolder: document.querySelector("[name='obsidianFolder']").value,
+        serverEndpoint: document.querySelector("[name='serverEndpoint']").value,
 
         headingStyle: getCheckedValue(document.querySelectorAll("input[name='headingStyle']")),
         hr: getCheckedValue(document.querySelectorAll("input[name='hr']")),
@@ -124,6 +125,7 @@ const setCurrentChoice = result => {
     document.querySelector("[name='obsidianIntegration']").checked = options.obsidianIntegration;
     document.querySelector("[name='obsidianVault']").value = options.obsidianVault;
     document.querySelector("[name='obsidianFolder']").value = options.obsidianFolder;
+    document.querySelector("[name='serverEndpoint']").value = options.serverEndpoint;
 
     setCheckedValue(document.querySelectorAll("[name='headingStyle']"), options.headingStyle);
     setCheckedValue(document.querySelectorAll("[name='hr']"), options.hr);
