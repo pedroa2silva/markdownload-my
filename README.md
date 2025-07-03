@@ -41,12 +41,13 @@ You need to do some configurations in order to use this integration.
 ## Server API
 
 Run `npm install` inside the `server` folder and start the server with `npm start`.
-The service exposes a `POST /clip` endpoint accepting a JSON body `{ "url": "<target url>", "options": { ... } }` and returns an identifier and markdown content.
+The service exposes a `POST /clip` endpoint accepting a JSON body `{ "url": "<target url>", "options": { ... } }` and returns an identifier and markdown content. Pass `"puppeteer": true` in the `options` object to render the page with Puppeteer instead of `fetch`.
 Use `GET /result/:id` to retrieve the stored markdown.
 
 Environment variables:
 - `DOWNLOAD_IMAGES` – set to `true` to download images.
 - `IMAGE_STYLE` – style for image links (`markdown`, `base64`, etc.).
+- `USE_PUPPETEER` – set to `true` to render pages with Puppeteer instead of fetch.
 
 
 

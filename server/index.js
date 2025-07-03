@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const fetch = global.fetch;
+const puppeteer = require('puppeteer');
 const {
   getArticleFromDom,
   convertArticleToMarkdown,
@@ -24,9 +25,20 @@ app.get('/options', (req, res) => {
 app.post('/clip', async (req, res) => {
   const { url, options = {} } = req.body;
   if (!url) return res.status(400).json({ error: 'url required' });
+  const usePuppeteer =
+    options.puppeteer || process.env.USE_PUPPETEER === 'true';
   try {
-    const response = await fetch(url);
-    const html = await response.text();
+    let html;
+    if (usePuppeteer) {
+      const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+      const page = await browser.newPage();
+      await page.goto(url, { waitUntil: 'networkidle0' });
+      html = await page.content();
+      await browser.close();
+    } else {
+      const response = await fetch(url);
+      html = await response.text();
+    }
     const article = await getArticleFromDom(html);
     const id = uuidv4();
     const { markdown } = await convertArticleToMarkdown(article, { ...options, id });
