@@ -50,10 +50,12 @@ Environment variables:
 - `IMAGE_STYLE` – style for image links (`markdown`, `base64`, etc.).
 - `USE_PUPPETEER` – set to `true` to render pages with Puppeteer instead of fetch (can be overridden by the `puppeteer` option).
 
-To use Puppeteer on Linux you may need to install additional system packages. A minimal Debian/Ubuntu setup can be achieved with:
+If Puppeteer fails to launch (e.g. errors mentioning `libatk-1.0.so.0`), install the required system packages. A minimal Debian/Ubuntu setup can be achieved with:
 
 ```bash
-apt-get update && apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libx11-xcb1 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libasound2 libpangocairo-1.0-0 libcups2 libgtk-3-0
+sudo apt-get update && sudo apt-get install -y \
+  libatk1.0-0 libatk-bridge2.0-0 libx11-xcb1 libxcomposite1 libxdamage1 \
+  libxrandr2 libgbm1 libasound2 libpangocairo-1.0-0 libcups2 libgtk-3-0
 ```
 
 
