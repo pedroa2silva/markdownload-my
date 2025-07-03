@@ -42,12 +42,19 @@ You need to do some configurations in order to use this integration.
 
 Run `npm install` inside the `server` folder and start the server with `npm start`.
 The service exposes a `POST /clip` endpoint accepting a JSON body `{ "url": "<target url>", "options": { ... } }` and returns an identifier and markdown content. Pass `"puppeteer": true` in the `options` object to render the page with Puppeteer instead of `fetch`.
+The `puppeteer` option defaults to the value of the `USE_PUPPETEER` environment variable if set, otherwise `false`.
 Use `GET /result/:id` to retrieve the stored markdown.
 
 Environment variables:
 - `DOWNLOAD_IMAGES` – set to `true` to download images.
 - `IMAGE_STYLE` – style for image links (`markdown`, `base64`, etc.).
-- `USE_PUPPETEER` – set to `true` to render pages with Puppeteer instead of fetch.
+- `USE_PUPPETEER` – set to `true` to render pages with Puppeteer instead of fetch (can be overridden by the `puppeteer` option).
+
+To use Puppeteer on Linux you may need to install additional system packages. A minimal Debian/Ubuntu setup can be achieved with:
+
+```bash
+apt-get update && apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libx11-xcb1 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libasound2 libpangocairo-1.0-0 libcups2 libgtk-3-0
+```
 
 
 

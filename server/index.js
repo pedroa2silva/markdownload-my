@@ -25,8 +25,9 @@ app.get('/options', (req, res) => {
 app.post('/clip', async (req, res) => {
   const { url, options = {} } = req.body;
   if (!url) return res.status(400).json({ error: 'url required' });
+  const envUsePuppeteer = process.env.USE_PUPPETEER === 'true';
   const usePuppeteer =
-    options.puppeteer || process.env.USE_PUPPETEER === 'true';
+    typeof options.puppeteer === 'boolean' ? options.puppeteer : envUsePuppeteer;
   try {
     let html;
     if (usePuppeteer) {
