@@ -35,12 +35,14 @@ const defaultOptions = {
   contextMenus: true,
   obsidianIntegration: false,
   obsidianVault: "",
-  obsidianFolder: ""
+  obsidianFolder: "",
+  puppeteer: false
 };
 function getOptions(overrides = {}) {
   const envOptions = {};
   if (process.env.DOWNLOAD_IMAGES) envOptions.downloadImages = process.env.DOWNLOAD_IMAGES === 'true';
   if (process.env.IMAGE_STYLE) envOptions.imageStyle = process.env.IMAGE_STYLE;
+  if (process.env.USE_PUPPETEER) envOptions.puppeteer = process.env.USE_PUPPETEER === 'true';
   return { ...defaultOptions, ...envOptions, ...overrides };
 }
 
