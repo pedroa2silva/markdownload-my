@@ -1,6 +1,8 @@
+// Unit tests for the markdown conversion pipeline
 const fs = require('fs');
 const path = require('path');
 const request = require('supertest');
+// Mock puppeteer so tests run without launching a browser
 jest.mock('puppeteer');
 const puppeteer = require('puppeteer');
 const app = require('../index');
@@ -12,10 +14,12 @@ describe('markdown conversion', () => {
 
   jest.setTimeout(20000);
 
+  // Spin up the express app once for all tests
   beforeAll(async () => {
     server = request(app);
   });
 
+  // Reset timers and mock puppeteer before each test
   beforeEach(() => {
     jest.useFakeTimers().setSystemTime(new Date('2020-01-01T00:00:00Z'));
     puppeteer.launch.mockResolvedValue({
@@ -28,11 +32,13 @@ describe('markdown conversion', () => {
     });
   });
 
+  // Clean up mocks and timers after each test
   afterEach(() => {
     jest.useRealTimers();
     jest.resetAllMocks();
   });
 
+  // Should match output when fetching HTML directly
   it('matches direct conversion using fetch', async () => {
     const article = await getArticleFromDom(html);
     const direct = await convertArticleToMarkdown(article, { id: 'test' });
@@ -43,6 +49,7 @@ describe('markdown conversion', () => {
     expect(res.body.markdown).toBe(direct.markdown);
   });
 
+  // Should match output when rendering via puppeteer
   it('matches direct conversion using puppeteer', async () => {
     const article = await getArticleFromDom(html);
     const direct = await convertArticleToMarkdown(article, { id: 'test' });
