@@ -1,4 +1,12 @@
-// Core dependencies for the express server and utilities
+/**
+ * Minimal Express server exposing endpoints used by the browser extension.
+ *
+ * The `/clip` route accepts a URL and returns the page converted to Markdown.
+ * The `/options` route exposes server-side defaults for the web UI.
+ * Generated Markdown files are stored on disk so they can be retrieved via
+ * `/result/:id`.
+ */
+// Core dependencies used to expose the clipping API
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -24,16 +32,29 @@ app.use(express.static(PUBLIC_DIR));
 const OUTPUT_DIR = path.join(__dirname, 'output');
 fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-// Expose the server's default conversion options for the web UI
+/**
+ * GET /options
+ *
+ * Return the server-side default conversion settings so the web UI can display
+ * them to the user. These defaults may be affected by environment variables.
+ */
 app.get('/options', (req, res) => {
   res.json(getOptions());
 });
 
-// Convert the provided URL into markdown using Readability and Turndown
+/**
+ * POST /clip
+ *
+ * Accepts a JSON body containing a `url` and optional conversion `options`.
+ * The page is fetched (or rendered with Puppeteer) and converted to Markdown.
+ * The resulting document is saved on disk and returned in the response.
+ */
 app.post('/clip', async (req, res) => {
   const { url, options = {} } = req.body;
   if (!url) return res.status(400).json({ error: 'url required' });
-  // Determine if Puppeteer should be used from either request or env vars
+  // Determine if Puppeteer should be used from either request or env vars.
+  // When USE_PUPPETEER is true the server falls back to Puppeteer by default,
+  // but the client can override this per-request via the `options` payload.
   const envUsePuppeteer = process.env.USE_PUPPETEER === 'true';
   const usePuppeteer =
     typeof options.puppeteer === 'boolean' ? options.puppeteer : envUsePuppeteer;
@@ -76,7 +97,12 @@ app.post('/clip', async (req, res) => {
   }
 });
 
-// Retrieve a previously generated markdown file by id
+/**
+ * GET /result/:id
+ *
+ * Look up a previously generated Markdown file by identifier and return the
+ * raw Markdown. Responds with `404` if the file does not exist.
+ */
 app.get('/result/:id', (req, res) => {
   const file = path.join(OUTPUT_DIR, `${req.params.id}.md`);
   if (!fs.existsSync(file)) return res.status(404).json({ error: 'not found' });

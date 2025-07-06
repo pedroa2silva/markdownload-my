@@ -41,7 +41,12 @@ const defaultOptions = {
   obsidianFolder: "",
   puppeteer: false
 };
-// Retrieve the effective options, merging env overrides and function args
+/**
+ * Merge provided options with defaults and environment overrides.
+ *
+ * @param {Object} [overrides={}] Values supplied by the caller.
+ * @returns {Object} Combined option set used during conversion.
+ */
 function getOptions(overrides = {}) {
   const envOptions = {};
   // Allow environment variables to override default values
@@ -51,7 +56,13 @@ function getOptions(overrides = {}) {
   return { ...defaultOptions, ...envOptions, ...overrides };
 }
 
-// Remove characters that are invalid on most file systems
+/**
+ * Sanitize a proposed file name so it is safe to write on common file systems.
+ *
+ * @param {string} title      Original title or file name.
+ * @param {?string} [disallowedChars=null] Additional characters to strip.
+ * @returns {string} Sanitised file name.
+ */
 function generateValidFileName(title, disallowedChars = null) {
   if (!title) return title;
   title = String(title);
@@ -66,7 +77,16 @@ function generateValidFileName(title, disallowedChars = null) {
   return name;
 }
 
-// Replace template placeholders with data from the article
+/**
+ * Replace template placeholders with values from the article object.
+ *
+ * @param {string} string                Template string with `{placeholders}`.
+ * @param {Object} article               Article metadata and content.
+ * @param {?string} [disallowedChars=null] Characters that should be removed
+ *                                        from replacements when generating
+ *                                        filenames.
+ * @returns {string} Template with placeholders replaced.
+ */
 function textReplace(string, article, disallowedChars = null) {
   for (const key in article) {
     if (Object.hasOwn(article, key) && key !== 'content') {
@@ -113,7 +133,12 @@ function textReplace(string, article, disallowedChars = null) {
   return string.replace(defaultRegex, '');
 }
 
-// Parse an HTML document into a Readability article
+/**
+ * Parse raw HTML into a simplified Readability article object.
+ *
+ * @param {string} domString Raw HTML string to parse.
+ * @returns {Promise<Object>} Parsed article metadata and content.
+ */
 async function getArticleFromDom(domString) {
   const dom = new JSDOM(domString, { url: 'https://example.com' });
   const document = dom.window.document;
@@ -221,7 +246,16 @@ async function getArticleFromDom(domString) {
   return article;
 }
 
-// Download external images before writing markdown to disk
+/**
+ * Download and optionally embed external images referenced in the article.
+ *
+ * @param {Object} imageList Mapping of original URLs to local filenames.
+ * @param {string} markdown  Markdown string with image references.
+ * @param {Object} options   Normalised conversion options.
+ * @param {string} id        Unique identifier used to create the output folder.
+ * @returns {Promise<{imageList:Object, markdown:string}>} Updated image mapping
+ *          and markdown content.
+ */
 async function preDownloadImages(imageList, markdown, options, id) {
   const newImageList = {};
   // Fetch images in parallel and either embed or save them
@@ -251,7 +285,14 @@ async function preDownloadImages(imageList, markdown, options, id) {
   return { imageList: newImageList, markdown };
 }
 
-// Convert a Readability article object into markdown
+/**
+ * Convert a Readability article object into Markdown.
+ *
+ * @param {Object} article                Parsed article from `getArticleFromDom`.
+ * @param {Object} [overrides={}]          Optional conversion overrides.
+ * @returns {Promise<{markdown:string, imageList:Object}>}
+ *          Generated Markdown and any downloaded images.
+ */
 async function convertArticleToMarkdown(article, overrides = {}) {
   const options = getOptions(overrides);
   // Optionally wrap the markdown with custom front/back matter
