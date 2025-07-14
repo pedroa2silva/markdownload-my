@@ -98,14 +98,17 @@ const showOrHideClipOption = selection => {
 }
 
 const clipSite = id => {
-    return browser.tabs.executeScript(id, { code: "getSelectionAndDom()" })
+    return chrome.scripting.executeScript({
+        target: { tabId: id },
+        func: () => getSelectionAndDom()
+    })
         .then((result) => {
-            if (result && result[0]) {
-                showOrHideClipOption(result[0].selection);
+            if (result && result[0] && result[0].result) {
+                showOrHideClipOption(result[0].result.selection);
                 let message = {
                     type: "clip",
-                    dom: result[0].dom,
-                    selection: result[0].selection
+                    dom: result[0].result.dom,
+                    selection: result[0].result.selection
                 }
                 return browser.storage.sync.get(defaultOptions).then(options => {
                     browser.runtime.sendMessage({
@@ -158,12 +161,14 @@ browser.storage.sync.get(defaultOptions).then(options => {
 }).then((tabs) => {
     var id = tabs[0].id;
     var url = tabs[0].url;
-    browser.tabs.executeScript(id, {
-        file: "/browser-polyfill.min.js"
+    chrome.scripting.executeScript({
+        target: { tabId: id },
+        files: ["/browser-polyfill.min.js"]
     })
     .then(() => {
-        return browser.tabs.executeScript(id, {
-            file: "/contentScript/contentScript.js"
+        return chrome.scripting.executeScript({
+            target: { tabId: id },
+            files: ["/contentScript/contentScript.js"]
         });
     }).then( () => {
         console.info("Successfully injected MarkDownload content script");
