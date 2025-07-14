@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "MarkDownload - Markdown Web Clipper",
   "version": "3.4.0",
   "author": "Gordon Pedsersen",
@@ -13,14 +13,17 @@
     "512": "icons/favicon-512x512.png"
   },
   "permissions": [
-    "<all_urls>",
     "activeTab",
     "downloads",
     "storage",
     "contextMenus",
-    "clipboardWrite"
+    "clipboardWrite",
+    "scripting"
   ],
-  "browser_action": {
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
     "default_title": "MarkDownload",
     "default_popup": "popup/popup.html",
     "default_icon": {
@@ -31,17 +34,16 @@
     }
   },
   "background": {
-    "scripts": [
-      "browser-polyfill.min.js",
-      "background/apache-mime-types.js",
-      "background/moment.min.js",
-      "background/turndown.js",
-      "background/turndown-plugin-gfm.js",
-      "/background/Readability.js",
-      "shared/context-menus.js",
-      "shared/default-options.js",
-      "background/background.js"
-    ]
+    "service_worker": "service-worker.js"
+  },
+  "web_accessible_resources": [{
+    "resources": [
+      "contentScript/pageContext.js"
+    ],
+    "matches": ["<all_urls>"]
+  }],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
   },
   "options_ui": {
     "page": "options/options.html",

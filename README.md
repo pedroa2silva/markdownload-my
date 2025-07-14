@@ -20,6 +20,14 @@ The extension is available for [Firefox](https://addons.mozilla.org/en-GB/firefo
 
 [![iTunes App Store](https://img.shields.io/itunes/v/1554029832?label=Safari&logo=safari&style=flat)](https://apple.co/3tcU0pD)
 
+## Loading the MV3 extension in Chrome
+
+1. Run `npm run build` inside the `src` directory to package the extension.
+2. Open `chrome://extensions` and enable **Developer mode**.
+3. Click **Load unpacked** and choose the `src` folder.
+
+# Obsidian Integration
+
 # Obsidian Integration
 
 For integration with obsidian, you need to install and enable community plugins named "Advanced Obsidian URI". This plugin help us to bypass character limitation in URL. Because it's using clipboard as the source for creating new file.
