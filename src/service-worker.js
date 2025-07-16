@@ -1,4 +1,5 @@
-// service worker that imports background dependencies
+// Service worker that imports background dependencies
+// The default action shortcut (_execute_action) is defined in the manifest
 importScripts(
   'browser-polyfill.min.js',
   'background/apache-mime-types.js',
